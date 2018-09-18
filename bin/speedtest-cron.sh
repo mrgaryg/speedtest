@@ -8,13 +8,17 @@ else
    export GDRIVEDIR='1uTwLvWrTYrceTpFC-Rac2nS8_sidT2XL'
 fi
 
-if [[ -f ${BASEDIR}/bin/speedtest.py ]] ; then
-   [[ ! -d ${BASEDIR}/out ]] && mkdir $BASEDIR/out
-   echo "INFO: Calculating speed"
-   ${BASEDIR}/bin/speedtest.py >> ${BASEDIR}/out/speedtest.csv
-   echo "Syncing directories with gdrive"
-   /usr/local/bin/gdrive sync upload ${BASEDIR}/out ${GDRIVEDIR}
-else
+if [[ ! -f ${BASEDIR}/bin/speedtest.py ]] ; then
    echo "unable to find speedtest.py"
    exit 1
 fi
+
+echo "INFO: Priming the speedtest"
+${BASEDIR}/bin/speedtest.py 
+sleep 5
+[[ ! -d ${BASEDIR}/out ]] && mkdir $BASEDIR/out
+echo "INFO: Calculating speed..."
+${BASEDIR}/bin/speedtest.py >> ${BASEDIR}/out/speedtest.csv
+echo "Syncing directories with gdrive"
+/usr/local/bin/gdrive sync upload ${BASEDIR}/out ${GDRIVEDIR}
+exit 0
